@@ -1,0 +1,62 @@
+<table border=0 cellpadding=1 cellspacing=1><tr><td valign=top>
+<iframe id="srchform2" 
+ src="javascript:'<html><body style=margin:0px; ><form action=\'javascript:void();\' onSubmit=if(this.t1.value!=\'\')parent.findString(this.t1.value);return(false); ><input type=text id=t1 name=t1 value=text size=20><input type=submit name=b1 value=Find></form></body></html>'" 
+ width=220 height=34 border=0 frameborder=0 scrolling=no>
+</iframe>
+</td><td valign=top width=99 style="padding-top:3px;"><g:plusone size="medium"></g:plusone></td>
+</tr></table>
+
+<p>
+Note that in some browsers (e.g. Firefox 2.0 and newer) 
+the <code>window.find()</code> method may find and highlight not only the existing text on the page but also
+the user's input text in forms, including the search box itself. To avoid this incompatibility,
+in the above example we have <nobr>not included</nobr> the <code>&lt;input&gt;</code> tag defining the search box in the HTML code of the current page; 
+instead, we load the search box via an <code>IFRAME</code> element.
+The content in any <code>FRAME</code> or <code>IFRAME</code> is not directly accessible 
+via the current <code>window</code> object, and therefore
+cannot be found with <code>window.find()</code>.
+
+</td>
+
+<td valign=top>
+
+<script language="JavaScript">
+var TRange=null;
+
+function findString (str) {
+ if (parseInt(navigator.appVersion)<4) return;
+ var strFound;
+ if (window.find) {
+
+  // CODE FOR BROWSERS THAT SUPPORT window.find
+
+  strFound=self.find(str);
+  if (!strFound) {
+   strFound=self.find(str,0,1);
+   while (self.find(str,0,1)) continue;
+  }
+ }
+ else if (navigator.appName.indexOf("Microsoft")!=-1) {
+
+  // EXPLORER-SPECIFIC CODE
+
+  if (TRange!=null) {
+   TRange.collapse(false);
+   strFound=TRange.findText(str);
+   if (strFound) TRange.select();
+  }
+  if (TRange==null || strFound==0) {
+   TRange=self.document.body.createTextRange();
+   strFound=TRange.findText(str);
+   if (strFound) TRange.select();
+  }
+ }
+ else if (navigator.appName=="Opera") {
+  alert ("Opera browsers not supported, sorry...")
+  return;
+ }
+ if (!strFound) alert ("String '"+str+"' not found!")
+ return;
+}
+</script>
+
